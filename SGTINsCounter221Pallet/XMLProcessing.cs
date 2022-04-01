@@ -40,34 +40,8 @@ namespace SGTINsCounter221Pallet
                       pallet_items.Select(x => x.lot).Distinct().ToArray().Aggregate((x, y) => x + ", " + y), pallet_items.Select(x => x.case_sscc).Distinct().Count(), pallet_items.Count());
                     Console.Write("Вывести содержимое палета?(y/n)");
                     input = Console.ReadLine();
-                    while (input != null)
-                    {
-                        if (input == "y" || input == "Y")
-                        {
-                            //foreach (var str in pallet_items)
-                            //{
-                            //    Console.WriteLine(str.sgtin);
-                            //}
-                            var distinctSSCC = pallet_items.Select(x => x.case_sscc).Distinct().ToArray();
-                            foreach (var sscc in distinctSSCC)
-                            {
-                                Console.WriteLine(sscc);
-                            }
-                            break;
-                        }
-                        else if (input == "n" || input == "N")
-                        {
-                            break;
-                        }
-                        else
-                        {
-
-                            Console.WriteLine("Неправильный ввод");
-                            Console.Write("Вывести содержимое короба?(y/n)");
-                            input = Console.ReadLine();
-                            continue;
-                        }
-                    }
+                    PrintItems(pallet_items, input);
+                    
                 }
                 else
                 {
@@ -115,6 +89,45 @@ namespace SGTINsCounter221Pallet
 
             }
             Console.ReadKey();
+        }
+
+        static void PrintItems(IEnumerable<object> collection, string input)
+        {
+            while (input != null)
+            {
+                var fields = collection.First().GetType().GetProperties().Select(p => p.Name);
+                foreach (var field in fields)
+                {
+                    Console.WriteLine(field.ToString());
+                }    
+                if (input == "y" || input == "Y")
+                {
+                    //Console.WriteLine(collection.SelectMany(p => p.ToString().Where(x => x.);
+                    foreach (var str in collection)
+                    {
+
+                        Console.WriteLine(str);
+                    }
+                    //var distinctSSCC = collection.Select(x => x.case_sscc).Distinct().ToArray();
+                    //foreach (var sscc in distinctSSCC)
+                    //{
+                    //    Console.WriteLine(sscc);
+                    //}
+                    break;
+                }
+                else if (input == "n" || input == "N")
+                {
+                    break;
+                }
+                else
+                {
+
+                    Console.WriteLine("Неправильный ввод");
+                    Console.Write("Вывести содержимое палета?(y/n)");
+                    input = Console.ReadLine();
+                    continue;
+                }
+            }
         }
                 
         
