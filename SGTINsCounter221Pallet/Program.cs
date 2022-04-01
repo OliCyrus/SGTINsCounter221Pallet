@@ -14,8 +14,8 @@ namespace SGTINsCounter221Pallet
         static void Main(string[] args)
         {
 
-            XMLProcessing xMLProcessing = new XMLProcessing(Directory.GetFiles(Directory.GetCurrentDirectory()+@"\221","*.xml"));
-            xMLProcessing.Parse221XML();
+            XMLProcessing xMLProcessing = new XMLProcessing(Directory.GetFiles(@"D:\221","*.xml"));
+            xMLProcessing.Parse221Xml();
 
         }
 

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +19,7 @@ namespace SGTINsCounter221Pallet
             _paths = filepaths;
         }
 
-        public void Parse221XML()
+        public void Parse221Xml()
         {
             string input = null;
             foreach(string path in _paths)
@@ -26,7 +28,7 @@ namespace SGTINsCounter221Pallet
                 var pallet_items = from xm in xml.Element("documents").Elements("hierarchy_info").Elements("sscc_down").
                                 Elements("sscc_info").Elements("childs").Elements("sscc_info").Elements("childs").Elements("sgtin_info")
                                        //where xm.Element("status").Value == "released_foreign"
-                                   select new
+                                   select new PalletInfo
                                    {
                                        pallet_sscc = xm.Parent.Parent.Parent.Parent.Element("sscc").Value,
                                        case_sscc = xm.Element("sscc").Value,
@@ -40,48 +42,37 @@ namespace SGTINsCounter221Pallet
                       pallet_items.Select(x => x.lot).Distinct().ToArray().Aggregate((x, y) => x + ", " + y), pallet_items.Select(x => x.case_sscc).Distinct().Count(), pallet_items.Count());
                     Console.Write("Вывести содержимое палета?(y/n)");
                     input = Console.ReadLine();
-                    PrintItems(pallet_items, input);
+                    PrintPalletItems(pallet_items, input);
                     
                 }
                 else
                 {
                     var case_items = from xm in xml.Element("documents").Elements("hierarchy_info").Elements("sscc_down").
                                Elements("sscc_info").Elements("childs").Elements("sgtin_info")
-                                     select new
+                                     select new CaseInfo
                                      {
+                                         upper_pallet_sscc = xm.Parent.Parent.Parent.Parent.Element("sscc_up").Element("sscc_info").Element("sscc").Value,
                                          case_sscc = xm.Element("sscc").Value,
                                          sgtin = xm.Element("sgtin").Value,
                                          lot = xm.Element("series_number").Value
 
                                      };
-                    Console.WriteLine("Короб:{0} Серия:{1} Количество упаковок:{2}", case_items.Select(x => x.case_sscc).FirstOrDefault(),
-                      case_items.Select(x => x.lot).FirstOrDefault(), case_items.Count());
+                    if(case_items.Select(p => p.upper_pallet_sscc).FirstOrDefault() == case_items.Select(s => s.case_sscc).FirstOrDefault())
+                    {
+                        Console.WriteLine("Короб:{0} Вложен в палету:{1} Серия:{2} Количество упаковок:{3}", case_items.Select(x => x.case_sscc).FirstOrDefault(),
+                      "-", case_items.Select(x => x.lot).Distinct().ToArray().Aggregate((x, y) => x + ", " + y), case_items.Count());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Короб:{0} Вложен в палету:{1} Серия:{2} Количество упаковок:{3}", case_items.Select(x => x.case_sscc).FirstOrDefault(),
+                      case_items.Select(x => x.upper_pallet_sscc).FirstOrDefault(), case_items.Select(x => x.lot).Distinct().ToArray().Aggregate((x, y) => x + ", " + y), case_items.Count());
+                        
+                    }
 
                     Console.Write("Вывести содержимое короба?(y/n)");
                     input = Console.ReadLine();
-                    while (input != null)
-                    {
-                        if (input == "y" || input == "Y")
-                        {
-                            foreach (var str in case_items)
-                            {
-                                Console.WriteLine(str.sgtin);
-                            }
-                            break;
-                        }
-                        else if (input == "n" || input == "N")
-                        {
-                            break;
-                        }
-                        else
-                        {
-
-                            Console.WriteLine("Неправильный ввод");
-                            Console.Write("Вывести содержимое короба?(y/n)");
-                            input = Console.ReadLine();
-                            continue;
-                        }
-                    }
+                    PrintCaseItems(case_items, input);
+                    
 
 
                 }
@@ -91,28 +82,21 @@ namespace SGTINsCounter221Pallet
             Console.ReadKey();
         }
 
-        static void PrintItems(IEnumerable<object> collection, string input)
+        static void PrintPalletItems(IEnumerable<PalletInfo> collection, string input)
         {
             while (input != null)
             {
-                var fields = collection.First().GetType().GetProperties().Select(p => p.Name);
-                foreach (var field in fields)
-                {
-                    Console.WriteLine(field.ToString());
-                }    
                 if (input == "y" || input == "Y")
                 {
-                    //Console.WriteLine(collection.SelectMany(p => p.ToString().Where(x => x.);
                     foreach (var str in collection)
                     {
-
-                        Console.WriteLine(str);
+                        Console.WriteLine(str.sgtin);
                     }
-                    //var distinctSSCC = collection.Select(x => x.case_sscc).Distinct().ToArray();
-                    //foreach (var sscc in distinctSSCC)
-                    //{
-                    //    Console.WriteLine(sscc);
-                    //}
+                    var distinctSSCC = collection.Select(x => x.case_sscc).Distinct().ToArray();
+                    foreach (var sscc in distinctSSCC)
+                    {
+                        Console.WriteLine(sscc);
+                    }
                     break;
                 }
                 else if (input == "n" || input == "N")
@@ -129,6 +113,34 @@ namespace SGTINsCounter221Pallet
                 }
             }
         }
+
+        static void PrintCaseItems(IEnumerable<CaseInfo> collection, string input)
+        {
+            while (input != null)
+            {
+                if (input == "y" || input == "Y")
+                {
+                    foreach (var str in collection)
+                    {
+                        Console.WriteLine(str.sgtin);
+                    }
+                    break;
+                }
+                else if (input == "n" || input == "N")
+                {
+                    break;
+                }
+                else
+                {
+
+                    Console.WriteLine("Неправильный ввод");
+                    Console.Write("Вывести содержимое короба?(y/n)");
+                    input = Console.ReadLine();
+                    continue;
+                }
+            }
+        }
+
                 
         
     }
