@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace SGTINsCounter221Pallet
                 var pallet_items = from xm in xml.Element("documents").Elements("hierarchy_info").Elements("sscc_down").
                                 Elements("sscc_info").Elements("childs").Elements("sscc_info").Elements("childs").Elements("sgtin_info")
                                        //where xm.Element("status").Value == "released_foreign"
-                                   select new PalletInfo
+                                   select new PalletInfo221
                                    {
                                        pallet_sscc = xm.Parent.Parent.Parent.Parent.Element("sscc").Value,
                                        case_sscc = xm.Element("sscc").Value,
@@ -49,7 +50,7 @@ namespace SGTINsCounter221Pallet
                 {
                     var case_items = from xm in xml.Element("documents").Elements("hierarchy_info").Elements("sscc_down").
                                Elements("sscc_info").Elements("childs").Elements("sgtin_info")
-                                     select new CaseInfo
+                                     select new CaseInfo221
                                      {
                                          upper_pallet_sscc = xm.Parent.Parent.Parent.Parent.Element("sscc_up").Element("sscc_info").Element("sscc").Value,
                                          case_sscc = xm.Element("sscc").Value,
@@ -82,7 +83,68 @@ namespace SGTINsCounter221Pallet
             Console.ReadKey();
         }
 
-        static void PrintPalletItems(IEnumerable<PalletInfo> collection, string input)
+        public void Split915Xml()
+        {
+            foreach (string path in _paths)
+            {
+                IEnumerable<XNode> nodes = Parse915Xml(path);
+                IEnumerator<XNode> enumerator = nodes.GetEnumerator();
+                int i = 1;
+                while (enumerator.MoveNext())
+                {
+                    List<XNode> nodestoadd = new List<XNode>();
+                    int size = 0;
+                    while (size < 900000)
+                    {
+                        if (enumerator.Current == null)
+                            break;
+                        nodestoadd.Add(enumerator.Current);
+                        size += enumerator.Current.ToString().Length;
+                        if (size > 900000)
+                            break;
+                        enumerator.MoveNext();
+                    }
+                    Create915Xml(path, nodestoadd, i);
+                    i++;
+                }
+
+            }
+            
+            
+        }
+
+        static void Create915Xml(string filepath, List<XNode> nodestoadd, int splitnumber)
+        {
+            XDocument document = new XDocument(new XDeclaration("1.0", "UTF-8", "yes"),
+                      new XElement("documents",
+                      new XAttribute("version", "1.35"),
+                      new XAttribute("original_id", "153c530e-e4f1-4730-a320-a1f314a7d5d2"),
+                      new XAttribute("session_ui", "09b3da39-f672-4127-825d-fbc7fe66e870"),
+                         new XElement("multi_pack", new XAttribute("action_id", "915"),
+                         new XElement("subject_id", "1e5bb040-46c2-4ee0-b8ca-6d68adbfeb33"),
+                         new XElement("operation_date", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fff") + "Z"),
+                         new XElement("by_sgtin"))));
+            document.Element("documents").Element("multi_pack").Element("by_sgtin").Add(nodestoadd);
+            FileInfo fileInfo = new FileInfo(filepath);
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Encoding = new UTF8Encoding(false);
+            settings.Indent = true;
+            using (XmlWriter writer = XmlWriter.Create(fileInfo.FullName.Replace(".",$"_{splitnumber}."), settings))
+            {
+                document.Save(writer);
+            }
+        }
+
+        #region Static Methods
+        static IEnumerable<XNode> Parse915Xml(string path)
+        {
+            XDocument xml = XDocument.Load(path);
+            IEnumerable<XNode> nodes = from nd in xml.Element("documents").Element("multi_pack").Element("by_sgtin").Nodes()
+                                       select nd;
+            return nodes;
+        }
+
+        static void PrintPalletItems(IEnumerable<PalletInfo221> collection, string input)
         {
             while (input != null)
             {
@@ -114,7 +176,7 @@ namespace SGTINsCounter221Pallet
             }
         }
 
-        static void PrintCaseItems(IEnumerable<CaseInfo> collection, string input)
+        static void PrintCaseItems(IEnumerable<CaseInfo221> collection, string input)
         {
             while (input != null)
             {
@@ -141,7 +203,8 @@ namespace SGTINsCounter221Pallet
             }
         }
 
-                
-        
+        #endregion
+
+
     }
 }

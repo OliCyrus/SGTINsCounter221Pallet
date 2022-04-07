@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SGTINsCounter221Pallet
 {
-    internal class CaseInfo
+    internal class CaseInfo221
     {
         public string upper_pallet_sscc { get; set; }
         public string case_sscc { get; set; }

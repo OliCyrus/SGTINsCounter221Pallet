@@ -98,5 +98,99 @@ namespace SGTINsCounter221Pallet
 
             }
         }
+
+        //public void Split915Xml()
+        //{
+        //    foreach (string path in _paths)
+        //    {
+        //        IEnumerable<XNode> nodes = Parse915Xml(path);
+        //        for (int i = 0; i < nodes.Count();)
+        //        {
+        //            int size = 0;
+        //            IEnumerable<XNode> nodestoadd = null;
+        //            while (size < 900000)
+        //            {
+        //                nodestoadd.Append(nodes.ElementAt(i));
+        //                size += size += nodes.ElementAt(i).ToString().Length;
+        //                i++;
+        //            }
+        //            Create915Xml(path, nodestoadd, i);
+        //        }
+        //XDocument document = new XDocument(new XDeclaration("1.0", "UTF-8", "yes"),
+        //          new XElement("documents",
+        //          new XAttribute("version", "1.35"),
+        //          new XAttribute("original_id", "153c530e-e4f1-4730-a320-a1f314a7d5d2"),
+        //          new XAttribute("session_ui", "09b3da39-f672-4127-825d-fbc7fe66e870"),
+        //             new XElement("multi_pack", new XAttribute("action_id", "915"),
+        //             new XElement("subject_id", "1e5bb040-46c2-4ee0-b8ca-6d68adbfeb33"),
+        //             new XElement("operation_date", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fff") + "Z"),
+        //             new XElement("by_sgtin"))));
+        //int n = 1;
+        //foreach (XNode node in nodes)
+        //{
+        //    if (size < 900000)
+        //    {
+        //        document.Element("documents").Element("multi_pack").Element("by_sgtin").Add(node);
+        //        size += node.ToString().Length;
+        //    }
+        //    else
+        //    {
+        //        FileInfo fileInfo = new FileInfo(path);
+        //        XmlWriterSettings settings = new XmlWriterSettings();
+        //        settings.Encoding = new UTF8Encoding(false);
+        //        settings.Indent = true;
+        //        using (XmlWriter writer = XmlWriter.Create(String.Concat(fileInfo.FullName, "_", n), settings))
+        //        {
+        //            document.Save(writer);
+        //        }
+        //        document = new XDocument(new XDeclaration("1.0", "UTF-8", "yes"),
+        //          new XElement("documents",
+        //          new XAttribute("version", "1.35"),
+        //          new XAttribute("original_id", "153c530e-e4f1-4730-a320-a1f314a7d5d2"),
+        //          new XAttribute("session_ui", "09b3da39-f672-4127-825d-fbc7fe66e870"),
+        //             new XElement("multi_pack", new XAttribute("action_id", "915"),
+        //             new XElement("subject_id", "1e5bb040-46c2-4ee0-b8ca-6d68adbfeb33"),
+        //             new XElement("operation_date", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fff") + "Z"),
+        //             new XElement("by_sgtin"))));
+        //        n++;
+        //        size = 0;
+        //    }
+
+        //}
+
+        //    }
+
+
+        //}
+
+        //static void Create915Xml(string filepath, IEnumerable<XNode> nodestoadd, int splitnumber)
+        //{
+        //    XDocument document = new XDocument(new XDeclaration("1.0", "UTF-8", "yes"),
+        //              new XElement("documents",
+        //              new XAttribute("version", "1.35"),
+        //              new XAttribute("original_id", "153c530e-e4f1-4730-a320-a1f314a7d5d2"),
+        //              new XAttribute("session_ui", "09b3da39-f672-4127-825d-fbc7fe66e870"),
+        //                 new XElement("multi_pack", new XAttribute("action_id", "915"),
+        //                 new XElement("subject_id", "1e5bb040-46c2-4ee0-b8ca-6d68adbfeb33"),
+        //                 new XElement("operation_date", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fff") + "Z"),
+        //                 new XElement("by_sgtin"))));
+        //    document.Element("documents").Element("multi_pack").Element("by_sgtin").Add(nodestoadd);
+        //    FileInfo fileInfo = new FileInfo(filepath);
+        //    XmlWriterSettings settings = new XmlWriterSettings();
+        //    settings.Encoding = new UTF8Encoding(false);
+        //    settings.Indent = true;
+        //    using (XmlWriter writer = XmlWriter.Create(fileInfo.FullName.Replace(".", "_{splitnumber}."), settings))
+        //    {
+        //        document.Save(writer);
+        //    }
+        //}
+        //static IEnumerable<XNode> Parse915Xml(string path)
+        //{
+        //    XDocument xml = XDocument.Load(path);
+        //    IEnumerable<XNode> nodes = from nd in xml.Element("documents").Element("multi_pack").Element("by_sgtin").Nodes()
+        //                               select nd;
+        //    return nodes;
+        //}
+        //}
     }
 }
