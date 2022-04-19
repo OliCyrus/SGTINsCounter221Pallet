@@ -13,11 +13,30 @@ namespace SGTINsCounter221Pallet
     {
         static void Main(string[] args)
         {
-
-            //XMLProcessing xMLProcessing = new XMLProcessing(Directory.GetFiles(@"D:\221","*.xml"));
-            //xMLProcessing.Parse221Xml();
-            XMLProcessing xMLProcessing = new XMLProcessing(Directory.GetFiles(@"D:\915"));
-            xMLProcessing.Split915Xml();
+            string choise;
+            bool iterator = true;
+            while(iterator)
+            {
+                Console.Write(String.Concat("1. Распарсить 221", Environment.NewLine, "2. Разделить 915", Environment.NewLine, "3. Выход", Environment.NewLine, "Выбор: "));
+                choise = Console.ReadLine();
+                switch (choise)
+                {
+                    case "1":
+                        XMLProcessing xMLProcessing221 = new XMLProcessing();
+                        xMLProcessing221.Parse221Xml();
+                        break;
+                    case "2":
+                        XMLProcessing xMLProcessing915 = new XMLProcessing();
+                        xMLProcessing915.Split915Xml();
+                        break;
+                    case "3":
+                        iterator = false;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            
 
         }
 
